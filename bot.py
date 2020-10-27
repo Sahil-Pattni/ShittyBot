@@ -172,7 +172,7 @@ async def rand_choose(ctx, *args):
     if len(args) == 0:
         await ctx.send('Please give me at least one item to choose from')
         return
-    await ctx.send(f'I have chosen.....{random.choice(args)}')
+    await ctx.send(f'I have chosen.....{random.choice(args)}.')
 
 
 @bot.command(name='todo', help='To-Do List Functionality. No argument to see list, add XXXXXX to add, del X to delete')
