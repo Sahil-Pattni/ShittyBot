@@ -5,7 +5,7 @@ from discord.ext import commands
 import time
 import psycopg2
 from datetime import timedelta
-
+from pyOutlook import OutlookAccount
 
 # Global ID vars
 TOKEN = 'NzcwMjEwNzg0Njg4NDcyMDY0.X5aQsA.xl2OE08jX9UwRRU_TiChsZNOxAI'
@@ -19,10 +19,14 @@ log_channel = None
 start_time = None
 guild = None
 # Modules
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='$')
 connection = None # PostgreSQL
 cursor = None
 
+
+# Log bot output
+async def log(s):
+    await log_channel.send(s)
 
 # Init
 @bot.event
@@ -82,7 +86,7 @@ def is_channel(channel_id):
         return ctx.message.channel.id == channel_id
     return commands.check(predicate)
 
-
+# Status
 @bot.command(name='status', help='Returns bot statistics, such as uptime.')
 async def status(ctx, arg=None):
     output = ''
@@ -91,7 +95,7 @@ async def status(ctx, arg=None):
     output += f'Bot Uptime: {uptime[0]} hours, {uptime[1]} minutes, {uptime[2]} seconds.'
     await ctx.send(output)
 
-
+# Course deadlines
 @bot.command(name='deadlines', help='Returns deadlines for course argument. If no argument, returns the deadlines for channel course')
 async def deadlines(ctx, arg='DEFAULT'):
     query = 'SELECT * FROM deadlines WHERE course_code = '
@@ -120,7 +124,7 @@ async def deadlines(ctx, arg='DEFAULT'):
         return
 
     query += ' ORDER BY deadline'
-    await log_channel.send(f'Executing query: {query}')
+    await log(f'Executing query:\n{query}')
     cursor.execute(query)
     results = cursor.fetchall()
     if len(results) == 0:
@@ -133,6 +137,7 @@ async def deadlines(ctx, arg='DEFAULT'):
     await ctx.send(output)
 
 
+# To add deadlines via Discord
 @bot.command(name='add_deadline', help='Format: !add_deadline COURSE_CODE, DESCRIPTION, DEADLINE (YYYY-MM-DD)')
 @commands.has_role(ADMIN)
 async def add_deadline(ctx, *args):
@@ -151,22 +156,76 @@ async def add_deadline(ctx, *args):
     query = f"INSERT INTO deadlines (course_code, description, deadline) VALUES ('{args[0]}', '{desc}', '{args[-1]}');"
     cursor.execute(query)
     connection.commit()
-    await log_channel.send(f'Executing query: {query}')
+    await log(f'Executing query:\n{query}')
     await ctx.send(f'Successfully updated database. See #{LOG_CHANNEL_NAME} for more info.')
 
 
+# Handle error if user not authorized
 @add_deadline.error
 async def add_error(error, ctx):
     if isinstance(error, commands.MissingRole):
         await ctx.send('Sorry, you don\'t have permission to modify the database.')
 
 
+# Random picker
 @bot.command(name='random', help='Chooses a random element from provided arguments')
 async def rand_choose(ctx, *args):
     if len(args) == 0:
         await ctx.send('Please give me at least one item to choose from')
         return
     await ctx.send(f'I have chosen.....{random.choice(args)}')
+
+
+@bot.command(name='todo', help='To-Do List Functionality. No argument to see list, add XXXXXX to add, del X to delete')
+async def todo(ctx, *args):
+    cursor.execute('SELECT * FROM todo;')
+    todo_list = [[id_val, desc] for id_val, desc in cursor.fetchall()]
+
+    async def print_todo():
+        global todo_list
+        cursor.execute('SELECT * FROM todo;')
+        todo_list = [[id_val, desc] for id_val, desc in cursor.fetchall()]
+        output = ''
+        if len(todo_list) == 0:
+            output = 'No Items'
+        for i in range(len(todo_list)):
+            output += f'{i+1}. {todo_list[i][1]}\n'
+        await ctx.send(output)
+
+    if len(args) == 0:
+        await print_todo()
+    elif args[0].lower() == 'add':
+        if len(args) == 1:
+            await ctx.send('Missing argument: Description')
+            return
+        desc = ''
+        for i in range(1,len(args)):
+            desc += f'{args[i]} '
+        desc.strip() # Remove trailing white space
+        query = f"INSERT INTO todo (description) VALUES ('{desc}');"
+        await log(f'Executing query:\n{query}')
+        cursor.execute(query) # Insert into db
+        connection.commit() # Commit changes
+        await ctx.send('Added to-do item.')
+        await print_todo()
+        await ctx.send(f'See #{LOG_CHANNEL_NAME} for more details.')
+    elif args[0].lower() == 'del':
+        try:
+            index = int(args[1])
+            index -= 1
+            res = todo_list[index][0]
+            desc = todo_list[index][1]
+            query = f'DELETE FROM todo WHERE ID = {res};'
+            await log(f'Executing query:\n{query}')
+            await ctx.send(f'Deleted item: {desc}\nUpdated DB: \n')
+            cursor.execute(query)
+            connection.commit() # Commit change
+            await print_todo()
+            await ctx.send(f'See #{LOG_CHANNEL_NAME} for more details.')
+        except Exception as r:
+            await ctx.send(f'Please provide an index for todo item to delete.\nError: {r}')
+
+
 # ------------------------------------ #
 if __name__ == '__main__':
     print('Running main method....')
