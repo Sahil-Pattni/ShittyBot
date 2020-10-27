@@ -5,7 +5,6 @@ from discord.ext import commands
 import time
 import psycopg2
 from datetime import timedelta
-from pyOutlook import OutlookAccount
 
 # Global ID vars
 TOKEN = 'NzcwMjEwNzg0Njg4NDcyMDY0.X5aQsA.xl2OE08jX9UwRRU_TiChsZNOxAI'
