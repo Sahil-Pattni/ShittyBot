@@ -155,7 +155,7 @@ async def add_deadline(ctx, *args):
 
 @add_deadline.error
 async def add_error(error, ctx):
-    if isinstance(error, MissingRole):
+    if isinstance(error, commands.MissingRole):
         await ctx.send('Sorry, you don\'t have permission to modify the database.')
 
 
