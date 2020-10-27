@@ -164,5 +164,3 @@ async def add_error(error, ctx):
 if __name__ == '__main__':
     print('Running main method....')
     bot.run(TOKEN)
-
-
