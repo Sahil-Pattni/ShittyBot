@@ -1,4 +1,5 @@
 import discord
+import random
 import re
 from discord.ext import commands
 import time
@@ -160,7 +161,12 @@ async def add_error(error, ctx):
         await ctx.send('Sorry, you don\'t have permission to modify the database.')
 
 
-
+@bot.command(name='random', help='Chooses a random element from provided arguments')
+async def rand_choose(ctx, *args):
+    if len(args) == 0:
+        await ctx.send('Please give me at least one item to choose from')
+        return
+    await ctx.send(f'I have chosen.....{random.choice(args)}')
 # ------------------------------------ #
 if __name__ == '__main__':
     print('Running main method....')
