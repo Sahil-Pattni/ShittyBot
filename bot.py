@@ -158,6 +158,7 @@ async def add_error(error, ctx):
     if isinstance(error, MissingRole):
         await ctx.send('Sorry, you don\'t have permission to modify the database.')
 # ------------------------------------ #
-bot.run(TOKEN)
+if __name__ == '__main__':
+    bot.run(TOKEN)
 
 
