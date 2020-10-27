@@ -123,7 +123,7 @@ async def deadlines(ctx, arg='DEFAULT'):
         return
 
     query += ' ORDER BY deadline'
-    await log(f'Executing query:\n{query}')
+    await log(f'Executing query:\n`{query}`')
     cursor.execute(query)
     results = cursor.fetchall()
     if len(results) == 0:
@@ -155,7 +155,7 @@ async def add_deadline(ctx, *args):
     query = f"INSERT INTO deadlines (course_code, description, deadline) VALUES ('{args[0]}', '{desc}', '{args[-1]}');"
     cursor.execute(query)
     connection.commit()
-    await log(f'Executing query:\n{query}')
+    await log(f'Executing query:\n`{query}`')
     await ctx.send(f'Successfully updated database. See #{LOG_CHANNEL_NAME} for more info.')
 
 
@@ -202,7 +202,7 @@ async def todo(ctx, *args):
             desc += f'{args[i]} '
         desc.strip() # Remove trailing white space
         query = f"INSERT INTO todo (description) VALUES ('{desc}');"
-        await log(f'Executing query:\n{query}')
+        await log(f'Executing query:\n`{query}`')
         cursor.execute(query) # Insert into db
         connection.commit() # Commit changes
         await ctx.send('Added to-do item.')
@@ -215,7 +215,7 @@ async def todo(ctx, *args):
             res = todo_list[index][0]
             desc = todo_list[index][1]
             query = f'DELETE FROM todo WHERE ID = {res};'
-            await log(f'Executing query:\n{query}')
+            await log(f'Executing query:\n`{query}`')
             await ctx.send(f'Deleted item: {desc}\nUpdated DB: \n')
             cursor.execute(query)
             connection.commit() # Commit change
