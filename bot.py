@@ -11,8 +11,9 @@ TOKEN = 'NzcwMjEwNzg0Njg4NDcyMDY0.X5aQsA.xl2OE08jX9UwRRU_TiChsZNOxAI'
 GUILD = 'Sad Dayz' # Group / Guild Name
 DB = 'hw_db' # PostGres DB
 ADMIN = 'ADMIN' # Admin Role Name
-LOG_CHANNEL_NAME = 'bot_log' # Channel for bot log output
+LOG_CHANNEL_NAME = 'bot_logs' # Channel for bot log output
 WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
+DB_URL = 'postgres://vfuuujvlhfnnel:3043f6cee923d7ca9995c49ce9d5f1a6488b4668148eaccabfe8bcd16ba05c01@ec2-35-168-54-239.compute-1.amazonaws.com:5432/d4crbc492gva03'
 log_channel = None
 start_time = None
 guild = None
@@ -32,7 +33,8 @@ async def on_ready():
     start_time = time.time()
     # Conntect to Postgres
     try:
-        connection = psycopg2.connect(user='sid', password='sloth',host='127.0.0.1',port='5432',database=DB)
+        # connection = psycopg2.connect(user='sid', password='sloth',host='127.0.0.1',port='5432',database=DB)
+        connection = psycopg2.connect(DB_URL, sslmode='require')
         cursor = connection.cursor()
         print('Connected to Postgres')
     except (Exception, psycopg2.Error) as error:
@@ -83,9 +85,10 @@ def is_channel(channel_id):
 @bot.command(name='status', help='Returns bot statistics, such as uptime.')
 async def status(ctx, arg=None):
     output = ''
-    uptime = str(timedelta(seconds=(time.time()-start))).split(':')
-    output += f'Bot Uptime: {uptime[0]} hours, {uptime[1]} minutes, {uptime[2]} seconds.\n'
-    
+    uptime = str(timedelta(seconds=(time.time()-start_time))).split(':')
+    uptime = [int(float(x)) for x in uptime]
+    output += f'Bot Uptime: {uptime[0]} hours, {uptime[1]} minutes, {uptime[2]} seconds.'
+    await ctx.send(output)
 
 
 @bot.command(name='deadlines', help='Returns deadlines for course argument. If no argument, returns the deadlines for channel course')
@@ -118,6 +121,9 @@ async def deadlines(ctx, arg='DEFAULT'):
     await log_channel.send(f'Executing query: {query}')
     cursor.execute(query)
     results = cursor.fetchall()
+    if len(results) == 0:
+        await ctx.send('No deadlines to display.')
+        return
     output = f'Deadlines for {course_chosen}:\n'
     for r in results:
         _, code, desc, date = r
@@ -125,7 +131,7 @@ async def deadlines(ctx, arg='DEFAULT'):
     await ctx.send(output)
 
 
-@bot.command(name='add_deadline')
+@bot.command(name='add_deadline', help='Format: !add_deadline COURSE_CODE, DESCRIPTION, DEADLINE (YYYY-MM-DD)')
 @commands.has_role(ADMIN)
 async def add_deadline(ctx, *args):
     error = ''
