@@ -200,7 +200,7 @@ async def todo(ctx, *args):
         desc = ''
         for i in range(1,len(args)):
             desc += f'{args[i]} '
-        desc.strip() # Remove trailing white space
+        desc = desc.strip() # Remove trailing white space
         query = f"INSERT INTO todo (description) VALUES ('{desc}');"
         await log(f'Executing query:\n`{query}`')
         cursor.execute(query) # Insert into db
