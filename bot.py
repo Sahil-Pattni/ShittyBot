@@ -157,8 +157,12 @@ async def add_deadline(ctx, *args):
 async def add_error(error, ctx):
     if isinstance(error, MissingRole):
         await ctx.send('Sorry, you don\'t have permission to modify the database.')
+
+
+
 # ------------------------------------ #
 if __name__ == '__main__':
+    print('Running main method....')
     bot.run(TOKEN)
 
 
