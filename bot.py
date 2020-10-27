@@ -98,7 +98,7 @@ async def status(ctx, arg=None):
 @bot.command(name='deadlines', help='Returns deadlines for course argument. If no argument, returns the deadlines for channel course')
 async def deadlines(ctx, arg='DEFAULT'):
     query = 'SELECT * FROM deadlines WHERE course_code = '
-    courses = ['F21BC', 'F21PA', 'F21DL', 'F20SA']
+    courses = ['F21BC', 'F21PA', 'F21DL', 'F21SA']
     channel = ctx.channel.name.upper()
     course_chosen = 'all courses'
     if arg.upper() == 'ALL' or (arg == 'DEFAULT' and channel not in courses):
