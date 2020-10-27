@@ -118,6 +118,7 @@ async def deadlines(ctx, arg='DEFAULT'):
         await ctx.send('Please provide a course code or \'all\' as an argument or run this command in a course-specific channel')
         return
 
+    query += ' ORDER BY deadline'
     await log_channel.send(f'Executing query: {query}')
     cursor.execute(query)
     results = cursor.fetchall()
