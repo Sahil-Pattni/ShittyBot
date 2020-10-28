@@ -1,0 +1,9 @@
+heroku ph:credentials:url DATABASE
+
+# will return some credentials with their labels
+
+ssh -p <user>@<host> -L <port> <dbname>
+
+# will prompt for a password
+
+<password>
