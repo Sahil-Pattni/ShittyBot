@@ -5,7 +5,7 @@ from discord.ext import commands
 import time
 import psycopg2
 from datetime import timedelta
-
+import numpy as np
 # Global ID vars
 TOKEN = 'NzcwMjEwNzg0Njg4NDcyMDY0.X5aQsA.xl2OE08jX9UwRRU_TiChsZNOxAI'
 GUILD = 'Carpool Gang' # Group / Guild Name
@@ -223,6 +223,35 @@ async def todo(ctx, *args):
             await ctx.send(f'See #{LOG_CHANNEL_NAME} for more details.')
         except Exception as r:
             await ctx.send(f'Please provide an index for todo item to delete.\nError: {r}')
+
+
+@bot.command(name='stats', help='gives statistics on a list of numbers')
+async def stats(ctx, *args):
+    def get_stats(data):
+        output = 'STATISTICS\n--------------\n'
+        data.sort()
+        q1 = np.quantile(data, 0.25, interpolation='lower')
+        q3 = np.quantile(data, 0.75, interpolation='higher')
+        output += f'Mean: {round(data.mean(), 4)}\n'
+        output += f'Median: {np.median(data)}\n'
+        output += f'Mode: {np.argmax(data)}\n'
+        output += f'Q1: {q1}\n'
+        output += f'Q3: {q3}\n'
+        output += f'IQR: {q3-q1}\n'
+        output += f'Standard Deviation (Sample): {np.std(data, ddof=1)}\n'
+        output += f'Standard Deviation (Population): {np.std(data)}\n----------------'
+        return output
+    try:
+        data = np.array([float(x) for x in args])
+        ctx.send(get_stats)
+        return
+
+    except Exception as e:
+        await ctx.send(f'Error processing input data. See #{LOG_CHANNEL_NAME} for more details.')
+        await log(e)
+
+
+
 
 
 # ------------------------------------ #
