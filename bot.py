@@ -179,7 +179,7 @@ async def rand_choose(ctx, *args):
 async def todo(ctx, *args):
     cursor.execute('SELECT * FROM todo;')
     todo_list = [[id_val, desc] for id_val, desc in cursor.fetchall()]
-    user_id = ctx.author.id
+    user_id = str(ctx.author.id)
     async def print_todo():
         global todo_list
         cursor.execute(f'SELECT * FROM todo where user_id = {user_id};')
