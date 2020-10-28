@@ -178,7 +178,7 @@ async def rand_choose(ctx, *args):
 @bot.command(name='todo', help='To-Do List Functionality. No argument to see list, add XXXXXX to add, del X to delete')
 async def todo(ctx, *args):
     cursor.execute('SELECT * FROM todo;')
-    todo_list = [[id_val, desc] for id_val, desc in cursor.fetchall()]
+    todo_list = [[id_val, desc] for user_id, id_val, desc in cursor.fetchall()]
     user_id = str(ctx.author.id)
     async def print_todo():
         global todo_list
