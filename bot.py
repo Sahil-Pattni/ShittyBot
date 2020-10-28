@@ -256,7 +256,7 @@ async def stats(ctx, *args):
 
 @bot.command(name='insult', help='insults you')
 async def insult(ctx):
-    response = response.get(INSULT_URL)
+    response = requests.get(INSULT_URL)
     await ctx.send(response.json()['insult'])
 
 # ------------------------------------ #
