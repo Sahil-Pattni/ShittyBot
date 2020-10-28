@@ -55,7 +55,7 @@ async def on_member_join(self, member):
 # rEtUrNs TeXt ThAt LoOkS lIkE tHiS
 def meme_reply(s):
     s = s.replace('*','').lower() # Take out star to avoid errors
-    if re.search(s, 'hello tehre!?'):
+    if re.match(s, 'hello there!?'):
         return 'General Kenobi!'
     reply = ''
     switch = False
