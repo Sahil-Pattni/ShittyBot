@@ -238,8 +238,8 @@ async def stats(ctx, *args):
         output += f'Q1: {q1}\n'
         output += f'Q3: {q3}\n'
         output += f'IQR: {q3-q1}\n'
-        output += f'Standard Deviation (Sample): {np.std(data, ddof=1)}\n'
-        output += f'Standard Deviation (Population): {np.std(data)}\n----------------'
+        output += f'Standard Deviation (Sample): {round(np.std(data, ddof=1), 4)}\n'
+        output += f'Standard Deviation (Population): {round(np.std(data), 4)}\n----------------'
         return output
     try:
         data = np.array([float(x) for x in args])
