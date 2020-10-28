@@ -1,3 +1,4 @@
+import requests
 import discord
 import random
 import re
@@ -14,6 +15,7 @@ ADMIN = 'OVERLORD' # Admin Role Name
 LOG_CHANNEL_NAME = 'bot_logs' # Channel for bot log output
 WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
 DB_URL = 'postgres://vfuuujvlhfnnel:3043f6cee923d7ca9995c49ce9d5f1a6488b4668148eaccabfe8bcd16ba05c01@ec2-35-168-54-239.compute-1.amazonaws.com:5432/d4crbc492gva03'
+INSULT_URL = 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
 log_channel = None
 start_time = None
 guild = None
@@ -252,9 +254,13 @@ async def stats(ctx, *args):
 
 
 
-
+@bot.command(name='insult', help='insults you')
+async def insult(ctx):
+    response = response.get(INSULT_URL)
+    await ctx.send(response.json()['insult'])
 
 # ------------------------------------ #
 if __name__ == '__main__':
+
     print('Running main method....')
     bot.run(TOKEN)
