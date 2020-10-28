@@ -86,8 +86,8 @@ def is_channel(channel_id):
     return commands.check(predicate)
 
 # Status
-@bot.command(name='status', help='Returns bot statistics, such as uptime.')
-async def status(ctx, arg=None):
+@bot.command(name='uptime', help='Returns bot statistics, such as uptime.')
+async def uptime(ctx, arg=None):
     output = ''
     uptime = str(timedelta(seconds=(time.time()-start_time))).split(':')
     uptime = [int(float(x)) for x in uptime]
