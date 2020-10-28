@@ -179,10 +179,10 @@ async def rand_choose(ctx, *args):
 async def todo(ctx, *args):
     cursor.execute('SELECT * FROM todo;')
     todo_list = [[id_val, desc] for id_val, desc in cursor.fetchall()]
-
+    user_id = ctx.author.id
     async def print_todo():
         global todo_list
-        cursor.execute('SELECT * FROM todo;')
+        cursor.execute(f'SELECT * FROM todo where user_id = {user_id};')
         todo_list = [[id_val, desc] for id_val, desc in cursor.fetchall()]
         output = ''
         if len(todo_list) == 0:
@@ -201,7 +201,7 @@ async def todo(ctx, *args):
         for i in range(1,len(args)):
             desc += f'{args[i]} '
         desc = desc.strip() # Remove trailing white space
-        query = f"INSERT INTO todo (description) VALUES ('{desc}');"
+        query = f"INSERT INTO todo (user_id, description) VALUES ({user_id}, '{desc}');"
         await log(f'Executing query:\n`{query}`')
         cursor.execute(query) # Insert into db
         connection.commit() # Commit changes
