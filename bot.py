@@ -243,7 +243,7 @@ async def stats(ctx, *args):
         return output
     try:
         data = np.array([float(x) for x in args])
-        ctx.send(get_stats)
+        await ctx.send(get_stats)
         return
 
     except Exception as e:
