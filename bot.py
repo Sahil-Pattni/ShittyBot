@@ -259,7 +259,15 @@ async def insult(ctx):
     response = requests.get(INSULT_URL)
     await ctx.send(response.json()['insult'])
 
+@bot.command(name='btc', help='btc_price')
+async def btc(ctx):
+    url = 'https://api.coindesk.com/v1/bpi/currentprice.json'
+    response = requests.get(url).json()['bpi']['USD']['rate']
+    await ctx.send(f'Current Price: ${response}')
+
+
 # ------------------------------------ #
+
 if __name__ == '__main__':
 
     print('Running main method....')
