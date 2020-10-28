@@ -8,7 +8,7 @@ from datetime import timedelta
 import numpy as np
 # Global ID vars
 TOKEN = 'NzcwMjEwNzg0Njg4NDcyMDY0.X5aQsA.xl2OE08jX9UwRRU_TiChsZNOxAI'
-GUILD = 'Carpool Gang' # Group / Guild Name
+GUILD = 'Educational Visit' # Group / Guild Name
 DB = 'hw_db' # PostGres DB
 ADMIN = 'OVERLORD' # Admin Role Name
 LOG_CHANNEL_NAME = 'bot_logs' # Channel for bot log output
