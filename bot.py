@@ -283,11 +283,11 @@ async def wallpaper(ctx, *args):
             x = int(args[0])
             w = x
             h = x
-        elif leng(args) == 2:
+        elif len(args) == 2:
             w = int(args[0])
             h = int(args[1])
     except Exception as e:
-        await ctx.send('Your arguments are invalid. Please try 0-2 integer arguments')
+        await ctx.send(f'Your arguments are invalid. Please try 0-2 integer arguments.\nSee #{LOG_CHANNEL_NAME} for more details.')
         await log(e)
         return
 
