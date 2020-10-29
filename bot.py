@@ -274,7 +274,7 @@ async def quote(ctx):
 
 
 @bot.command(name='wallpaper', help='Wallpaper')
-async wallpaper(ctx, *args):
+async def wallpaper(ctx, *args):
     w = 1920
     h = 1080
     
