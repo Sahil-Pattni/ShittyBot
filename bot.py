@@ -272,7 +272,29 @@ async def quote(ctx):
     quote, author = response['en'], response['author']
     await ctx.send(f'"{quote}" - {author}')
 
+
+@bot.command(name='wallpaper', help='Wallpaper')
+async wallpaper(ctx, *args):
+    w = 1920
+    h = 1080
+    
+    try:
+        if len(args) == 1:
+            x = int(args[0])
+            w = x
+            h = x
+        elif leng(args) == 2:
+            w = int(args[0])
+            h = int(args[1])
+    except Exception as e:
+        await ctx.send('Your arguments are invalid. Please try 0-2 integer arguments')
+        await log(e)
+        return
+
+    await ctx.send(f'https://picsum.photos/{w}/{h}')
+
 # ------------------------------------ #
+
 
 if __name__ == '__main__':
 
