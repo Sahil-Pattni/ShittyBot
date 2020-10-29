@@ -291,7 +291,9 @@ async def wallpaper(ctx, *args):
         await log(e)
         return
 
-    await ctx.send(f'https://picsum.photos/{w}/{h}')
+    seed = random.randint(10,999999)
+    url = f'https://picsum.photos/{seed}/picsum/{w}/{h}'
+    await ctx.send(url)
 
 # ------------------------------------ #
 
