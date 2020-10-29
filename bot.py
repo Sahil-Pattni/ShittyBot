@@ -269,7 +269,8 @@ async def btc(ctx):
 async def quote(ctx):
     url = 'https://programming-quotes-api.herokuapp.com/quotes/lang/en'
     response = requests.get(url).json()
-    await ctx.send(random.choice(response)['en'])
+    quote = random.choice(response)
+    await ctx.send(f'"{quote['en']}" - {quote['author']')
 
 # ------------------------------------ #
 
