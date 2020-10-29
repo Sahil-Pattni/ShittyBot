@@ -265,6 +265,11 @@ async def btc(ctx):
     response = requests.get(url).json()['bpi']['USD']['rate']
     await ctx.send(f'Current Price: ${response}')
 
+@bot.command(name='quote', help='Random programming quote')
+async def quote(ctx):
+    url = 'https://programming-quotes-api.herokuapp.com/quotes/lang/en'
+    response = requests.get(url).json()
+    await ctx.send(random.choice(response)['en'])
 
 # ------------------------------------ #
 
