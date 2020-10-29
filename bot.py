@@ -267,9 +267,8 @@ async def btc(ctx):
 
 @bot.command(name='quote', help='Random programming quote')
 async def quote(ctx):
-    url = 'https://programming-quotes-api.herokuapp.com/quotes/lang/en'
+    url = 'https://programming-quotes-api.herokuapp.com/quotes/random'
     response = requests.get(url).json()
-    response = random.choice(response)
     quote, author = response['en'], response['author']
     await ctx.send(f'"{quote}" - {author}')
 
