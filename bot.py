@@ -93,7 +93,7 @@ def is_channel(channel_id):
 async def uptime(ctx, arg=None):
     output = ''
     time_now = datetime.datetime.now()
-    diff = (time_now - start).total_seconds()
+    diff = (time_now - start_time).total_seconds()
     minutes, seconds = divmod(diff, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
