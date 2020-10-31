@@ -36,7 +36,7 @@ async def on_ready():
     guild = discord.utils.get(bot.guilds, name=GUILD)
     log_channel = discord.utils.get(guild.channels, name=LOG_CHANNEL_NAME)
     print(f'{bot.user.name} connected to {guild.name}')
-    start_time = time.time()
+    start_time = datetime.datetime.now()
     # Conntect to Postgres
     try:
         # connection = psycopg2.connect(user='sid', password='sloth',host='127.0.0.1',port='5432',database=DB)
@@ -91,15 +91,20 @@ def is_channel(channel_id):
 @bot.command(name='uptime', help='Returns bot statistics, such as uptime.')
 async def uptime(ctx, arg=None):
     output = ''
-    uptime = str(timedelta(seconds=(time.time()-start_time))).split(':')
-    uptime = [int(float(x)) for x in uptime]
-    output += f'Bot Uptime: {uptime[0]} hours, {uptime[1]} minutes, {uptime[2]} seconds.'
+    time_now = datetime.datetime.now()
+    diff = (time_now - start).total_seconds()
+    minutes, seconds = divmod(diff, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    output = f'Uptime: {days} days, {hours} hours, {minutes} minutes, {seconds} seconds'
     await ctx.send(output)
 
 # Course deadlines
 @bot.command(name='deadlines', help='Returns deadlines for course argument. If no argument, returns the deadlines for channel course')
 async def deadlines(ctx, arg='DEFAULT'):
-    query = 'SELECT * FROM deadlines WHERE course_code = '
+    today = datetime.datetime.now()
+
+    query = f"SELECT * FROM deadlines WHERE deadline >= '{today.year}-{today.month}-{today.day} and course_code = "
     courses = ['F21BC', 'F21PA', 'F21DL', 'F21SA']
     channel = ctx.channel.name.upper()
     course_chosen = 'all courses'
