@@ -97,6 +97,7 @@ async def uptime(ctx, arg=None):
     minutes, seconds = divmod(diff, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
+    days, hours, minutes, seconds = int(days), int(hours), int(minutes), int(seconds)
     output = f'Uptime: {days} days, {hours} hours, {minutes} minutes, {seconds} seconds'
     await ctx.send(output)
 
