@@ -107,7 +107,7 @@ async def deadlines(ctx, arg='DEFAULT'):
     today = datetime.datetime.now()
 
     query = f"SELECT * FROM deadlines WHERE deadline >= '{today.year}-{today.month}-{today.day} and course_code = "
-    courses = ['F21BC', 'F21PA', 'F21DL', 'F21SA']
+    courses = ['F21BC', 'F21PA', 'F21DL', 'F21SA', 'OTHER']
     channel = ctx.channel.name.upper()
     course_chosen = 'all courses'
     if arg.upper() == 'ALL' or (arg == 'DEFAULT' and channel not in courses):
