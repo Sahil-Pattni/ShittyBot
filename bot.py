@@ -5,6 +5,7 @@ import re
 from discord.ext import commands
 import time
 import psycopg2
+import datetime
 from datetime import timedelta
 import numpy as np
 # Global ID vars
