@@ -90,7 +90,7 @@ def is_channel(channel_id):
 
 # Status
 @bot.command(name='uptime', help='Returns bot statistics, such as uptime.')
-async def uptime(ctx, arg=None):
+async def uptime(ctx, *args):
     output = ''
     time_now = datetime.datetime.now()
     diff = (time_now - start_time).total_seconds()
@@ -99,6 +99,9 @@ async def uptime(ctx, arg=None):
     days, hours = divmod(hours, 24)
     days, hours, minutes, seconds = int(days), int(hours), int(minutes), int(seconds)
     output = f'Uptime: {days} days, {hours} hours, {minutes} minutes, {seconds} seconds'
+    if len(args) != 0:
+        if args[0].lower() == 'debug':
+            output += f'\nStart Time: {start_time}, Now: {time_now}'
     await ctx.send(output)
 
 # Course deadlines
