@@ -8,6 +8,7 @@ import psycopg2
 import datetime
 from datetime import timedelta
 import numpy as np
+
 # Global ID vars
 TOKEN = 'NzcwMjEwNzg0Njg4NDcyMDY0.X5aQsA.xl2OE08jX9UwRRU_TiChsZNOxAI'
 GUILD = 'Educational Visit' # Group / Guild Name
@@ -18,7 +19,7 @@ WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
 DB_URL = 'postgres://vfuuujvlhfnnel:3043f6cee923d7ca9995c49ce9d5f1a6488b4668148eaccabfe8bcd16ba05c01@ec2-35-168-54-239.compute-1.amazonaws.com:5432/d4crbc492gva03'
 INSULT_URL = 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
 log_channel = None
-start_time = None
+start_time = datetime.datetime.now()
 guild = None
 # Modules
 bot = commands.Bot(command_prefix='$')
@@ -37,7 +38,6 @@ async def on_ready():
     guild = discord.utils.get(bot.guilds, name=GUILD)
     log_channel = discord.utils.get(guild.channels, name=LOG_CHANNEL_NAME)
     print(f'{bot.user.name} connected to {guild.name}')
-    start_time = datetime.datetime.now()
     # Conntect to Postgres
     try:
         # connection = psycopg2.connect(user='sid', password='sloth',host='127.0.0.1',port='5432',database=DB)
