@@ -78,6 +78,7 @@ async def dummy_check(ctx):
         flag = 'NOT'
     await ctx.send(f'{ctx.author.name}, you are {flag} allowed to say the word dummy.')
 
+
 # Random picker
 @bot.command(name='random', help='Chooses a random element from provided arguments')
 async def rand_choose(ctx, *args):
@@ -86,11 +87,13 @@ async def rand_choose(ctx, *args):
         return
     await ctx.send(f'I have chosen.....{random.choice(args)}.')
 
+
 # Insult
 @bot.command(name='insult', help='insults you')
 async def insult(ctx):
     response = requests.get('https://evilinsult.com/generate_insult.php?lang=en&type=json')
     await ctx.send(response.json()['insult'])
+
 
 # Bitcoin price
 @bot.command(name='btc', help='btc_price')
@@ -99,12 +102,30 @@ async def btc(ctx):
     response = requests.get(url).json()['bpi']['USD']['rate']
     await ctx.send(f'Current Price: ${response}')
 
+
 # Dogecoin price
 @bot.command(name='doge', help='dogecoin price')
 async def btc(ctx):
     url = f'https://api.nomics.com/v1/currencies/ticker?key={env.get("NOMICS_KEY")}&ids=DOGE&attributes=price'
     response = requests.get(url).json()[0]['price']
     await ctx.send(f'Current Price: ${response}')
+
+
+@bot.command(name='covid', help='covid stats')
+async def covid(ctx):
+    country = 'United Arab Emirates'
+    if len(args) > 0:
+        country = args[0]
+    
+    url = f'https://covid-api.mmediagroup.fr/v1/cases?country={country}'
+    response = requests.get(url).json()['All']
+
+    reply = f"Country: {response['country']}\n" \
+            f"Confirmed: {response['confirmed']:,}\n" \
+            f"Recovered: {response['recovered']:,}\n" \
+            f"Deaths: {response['deaths']:,}"
+    
+    await ctx.send(reply)
 
 # Wallpaper Generator
 # Optional arguments: width, height
