@@ -18,6 +18,7 @@ LOG_CHANNEL_NAME = 'bot_logs' # Channel for bot log output
 WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
 DB_URL = 'postgres://vfuuujvlhfnnel:3043f6cee923d7ca9995c49ce9d5f1a6488b4668148eaccabfe8bcd16ba05c01@ec2-35-168-54-239.compute-1.amazonaws.com:5432/d4crbc492gva03'
 INSULT_URL = 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
+NOMICS_KEY = '1b8df7bacf41522db8d4c540bb9e0ed5'
 log_channel = None
 start_time = datetime.datetime.now()
 guild = None
@@ -237,32 +238,6 @@ async def todo(ctx, *args):
             await ctx.send(f'Please provide an index for todo item to delete.\nError: {r}')
 
 
-@bot.command(name='stats', help='gives statistics on a list of numbers')
-async def stats(ctx, *args):
-    def get_stats(data):
-        output = 'STATISTICS\n--------------\n'
-        data.sort()
-        q1 = np.quantile(data, 0.25, interpolation='lower')
-        q3 = np.quantile(data, 0.75, interpolation='higher')
-        output += f'Mean: {round(data.mean(), 4)}\n'
-        output += f'Median: {np.median(data)}\n'
-        output += f'Mode: {np.argmax(data)}\n'
-        output += f'Q1: {q1}\n'
-        output += f'Q3: {q3}\n'
-        output += f'IQR: {q3-q1}\n'
-        output += f'Standard Deviation (Sample): {round(np.std(data, ddof=1), 4)}\n'
-        output += f'Standard Deviation (Population): {round(np.std(data), 4)}\n----------------'
-        return output
-    try:
-        data = np.array([float(x) for x in args])
-        await ctx.send(get_stats(data))
-        return
-
-    except Exception as e:
-        await ctx.send(f'Error processing input data. See #{LOG_CHANNEL_NAME} for more details.')
-        await log(e)
-
-
 
 @bot.command(name='insult', help='insults you')
 async def insult(ctx):
@@ -274,6 +249,13 @@ async def btc(ctx):
     url = 'https://api.coindesk.com/v1/bpi/currentprice.json'
     response = requests.get(url).json()['bpi']['USD']['rate']
     await ctx.send(f'Current Price: ${response}')
+
+@bot.command(name='doge', help='dogecoin price')
+async def btc(ctx):
+    url = f'https://api.nomics.com/v1/currencies/ticker?key={NOMICS_KEY}&ids=DOGE&attributes=price'
+    response = requests.get(url).json()['bpi']['USD']['rate']
+    await ctx.send(f'Current Price: ${response}')
+
 
 @bot.command(name='quote', help='Random programming quote')
 async def quote(ctx):
