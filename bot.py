@@ -110,23 +110,6 @@ async def btc(ctx):
     response = requests.get(url).json()[0]['price']
     await ctx.send(f'Current Price: ${response}')
 
-
-@bot.command(name='covid', help='covid stats')
-async def covid(ctx, *args):
-    country = 'United Arab Emirates'
-    if len(args) > 0:
-        country = args[0]
-    
-    url = f'https://covid-api.mmediagroup.fr/v1/cases?country={country}'
-    response = requests.get(url).json()['All']
-
-    reply = f"Country: {response['country']}\n" \
-            f"Confirmed: {response['confirmed']:,}\n" \
-            f"Recovered: {response['recovered']:,}\n" \
-            f"Deaths: {response['deaths']:,}"
-    
-    await ctx.send(reply)
-
 # Wallpaper Generator
 # Optional arguments: width, height
 @bot.command(name='wallpaper', help='Wallpaper')
