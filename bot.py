@@ -121,7 +121,7 @@ async def btc(ctx):
 
 @bot.command(name='doge', help='dogecoin price')
 async def btc(ctx):
-    url = f'https://api.nomics.com/v1/currencies/ticker?key={env.get('NOMICS_KEY')}&ids=DOGE&attributes=price'
+    url = f'https://api.nomics.com/v1/currencies/ticker?key={env.get("NOMICS_KEY")}&ids=DOGE&attributes=price'
     response = requests.get(url).json()[0]['price']
     await ctx.send(f'Current Price: ${response}')
 
