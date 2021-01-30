@@ -35,8 +35,6 @@ async def on_ready():
     guild = discord.utils.get(bot.guilds, id=747524804109664326)
     log_channel = discord.utils.get(guild.channels, name=LOG_CHANNEL_NAME)
     print(f'{bot.user.name} connected to {guild.name}')
-    await log('I was temporarily down but I have returned.')
-
 
 # Upon a member joining
 @bot.event
@@ -47,7 +45,6 @@ async def on_member_join(self, member):
 # Handle messages
 @bot.event
 async def on_message(message):
-
     # Ignore these channels
     if message.channel.name.lower() in BANNED_CHANNELS:
         return
