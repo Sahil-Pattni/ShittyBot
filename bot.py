@@ -81,13 +81,11 @@ async def on_message(message):
     if message.author == bot.user:
         return
     # Meme Replies
-    if message.channel.name == 'general':
-        # disabled this for now
-        if False:
+    if False && message.channel.name == 'general':
             await message.channel.send(meme_reply(message.content))
     # Handle commands
     else:
-        print(f'Processing {message}')
+        print(f'Processing {message.content}')
         await bot.process_commands(message)
 
 
