@@ -81,7 +81,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
     # Meme Replies
-    if False && message.channel.name == 'general':
+    if False and message.channel.name == 'general':
             await message.channel.send(meme_reply(message.content))
     # Handle commands
     else:
