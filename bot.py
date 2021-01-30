@@ -16,7 +16,7 @@ env = os.environ
 # Global ID vars
 LOG_CHANNEL_NAME = 'bot_logs' # Channel for bot log output
 WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
-
+VINAYAK = 713761220154621992 # Vinayak's ID
 # Modules
 guild = None # Discord Group
 log_channel = None
@@ -34,6 +34,7 @@ async def on_ready():
     guild = discord.utils.get(bot.guilds, id=747524804109664326)
     log_channel = discord.utils.get(guild.channels, name=LOG_CHANNEL_NAME)
     print(f'{bot.user.name} connected to {guild.name}')
+    log('I was temporarily down but I have returned.')
 
 
 # Upon a member joining
@@ -42,47 +43,17 @@ async def on_member_join(self, member):
     welcome_channel = discord.utils.get(guild.channels, name=WELCOME_CHANNEL_NAME)
     await welcome_channel.send(f'Hello there, {member.name}. Welcome to the {guild.name} discord!.')
 
-
-# rEtUrNs TeXt ThAt LoOkS lIkE tHiS
-def meme_reply(s):
-    s = s.replace('*','').lower() # Take out star to avoid errors
-    reply = ''
-    switch = False
-    for letter in s:
-        reply += letter.upper() if switch else letter.lower()
-        switch = not switch
-    
-    # url point for meme api
-    url = 'https://api.imgflip.com/caption_image'
-    # template ID for mocking spongebob meme
-    spongebob_id = 102156234
-
-    params = {
-        'template_id': spongebob_id,
-        'text1': reply,
-        'username': env.get('IMGFLIP_USERNAME'),
-        'password': env.get('IMGFLIP_PASSWORD')
-    }
-
-    response = requests.get(url, params=params)
-    response = response.json()
-
-    if response['success'] == False:
-        error_msg = response['error_message']
-        log(f'Error with meme reply: {error_msg}')
-    
-    return response['data']['url']
-
-
 # Handle messages
 @bot.event
 async def on_message(message):
+    
     # Avoid bot responding to itself
     if message.author == bot.user:
         return
-    # Meme Replies
-    if False and message.channel.name == 'general':
-            await message.channel.send(meme_reply(message.content))
+    
+    if message.sender.id == VINAYAK:
+        message.channel.send("Bonk! You are not allowed to say `dummy`.")
+    
     # Handle commands
     else:
         print(f'Processing {message.content}')
