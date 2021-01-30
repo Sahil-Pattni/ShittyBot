@@ -35,7 +35,7 @@ async def on_ready():
     guild = discord.utils.get(bot.guilds, id=747524804109664326)
     log_channel = discord.utils.get(guild.channels, name=LOG_CHANNEL_NAME)
     print(f'{bot.user.name} connected to {guild.name}')
-    log('I was temporarily down but I have returned.')
+    await log('I was temporarily down but I have returned.')
 
 
 # Upon a member joining
@@ -58,7 +58,7 @@ async def on_message(message):
 
     # Stop Vinayak from saying dummy
     if message.author.id == VINAYAK:
-        message.channel.send("Bonk! You are not allowed to say `dummy`.")
+        await message.channel.send("Bonk! You are not allowed to say `dummy`.")
     
     # Handle commands
     else:
