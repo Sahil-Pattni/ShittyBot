@@ -17,6 +17,7 @@ env = os.environ
 LOG_CHANNEL_NAME = 'bot_logs' # Channel for bot log output
 WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
 VINAYAK = 713761220154621992 # Vinayak's ID
+BANNED_CHANNELS = ['trivia', 'chess', 'nsfw'] # Channels to ignore
 # Modules
 guild = None # Discord Group
 log_channel = None
@@ -46,12 +47,17 @@ async def on_member_join(self, member):
 # Handle messages
 @bot.event
 async def on_message(message):
-    
+
+    # Ignore these channels
+    if message.channel.name.lower() in BANNED_CHANNELS:
+        return
+
     # Avoid bot responding to itself
     if message.author == bot.user:
         return
-    
-    if message.sender.id == VINAYAK:
+
+    # Stop Vinayak from saying dummy
+    if message.author.id == VINAYAK:
         message.channel.send("Bonk! You are not allowed to say `dummy`.")
     
     # Handle commands
@@ -75,20 +81,20 @@ async def rand_choose(ctx, *args):
         return
     await ctx.send(f'I have chosen.....{random.choice(args)}.')
 
-
+# Insult
 @bot.command(name='insult', help='insults you')
 async def insult(ctx):
     response = requests.get('https://evilinsult.com/generate_insult.php?lang=en&type=json')
     await ctx.send(response.json()['insult'])
 
-
+# Bitcoin price
 @bot.command(name='btc', help='btc_price')
 async def btc(ctx):
     url = 'https://api.coindesk.com/v1/bpi/currentprice.json'
     response = requests.get(url).json()['bpi']['USD']['rate']
     await ctx.send(f'Current Price: ${response}')
 
-
+# Dogecoin price
 @bot.command(name='doge', help='dogecoin price')
 async def btc(ctx):
     url = f'https://api.nomics.com/v1/currencies/ticker?key={env.get("NOMICS_KEY")}&ids=DOGE&attributes=price'
