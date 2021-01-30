@@ -1,8 +1,8 @@
 import requests
 import discord
+from discord.ext import commands
 import random
 import re
-from discord.ext import commands
 import time
 import psycopg2
 import datetime
@@ -63,7 +63,6 @@ async def on_message(message):
     
     # Handle commands
     else:
-        print(f'Processing {message.content}')
         await bot.process_commands(message)
 
 
@@ -73,6 +72,14 @@ def is_channel(channel_id):
         return ctx.message.channel.id == channel_id
     return commands.check(predicate)
 
+
+# Checks if a user is allowed to say dummy
+@bot.command(name='dummycheck', help='Can u use the word dummy?')
+async def dummy_check(ctx):
+    flag = ''
+    if ctx.author.id == VINAYAK:
+        flag = 'NOT'
+    await ctx.send(f'{ctx.author.name}, you are {flag} allowed to say the word dummy.')
 
 # Random picker
 @bot.command(name='random', help='Chooses a random element from provided arguments')
