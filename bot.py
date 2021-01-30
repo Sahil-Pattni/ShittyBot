@@ -82,11 +82,12 @@ async def on_message(message):
         return
     # Meme Replies
     if message.channel.name == 'general':
-        # If message begins with wow
-        if message.content.lower().strip()[:3] == 'wow':
+        # disabled this for now
+        if False:
             await message.channel.send(meme_reply(message.content))
     # Handle commands
     else:
+        print(f'Processing {message}')
         await bot.process_commands(message)
 
 
