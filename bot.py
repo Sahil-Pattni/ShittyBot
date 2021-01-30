@@ -68,7 +68,8 @@ def meme_reply(s):
     response = response.json()
 
     if response['success'] == False:
-        log(f'Error with meme reply: {response['error_message']}')
+        error_msg = response['error_message']
+        log(f'Error with meme reply: {error_msg}')
     
     return response['data']['url']
 
