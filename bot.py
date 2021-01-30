@@ -112,7 +112,7 @@ async def btc(ctx):
 
 
 @bot.command(name='covid', help='covid stats')
-async def covid(ctx):
+async def covid(ctx, *args):
     country = 'United Arab Emirates'
     if len(args) > 0:
         country = args[0]
