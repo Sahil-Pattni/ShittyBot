@@ -59,7 +59,7 @@ async def on_message(message):
     # Stop Vinayak from saying dummy
     if message.author.id == VINAYAK:
         if 'dummy' in message.content.lower().split(' '):
-        await message.channel.send("Bonk! You are not allowed to say `dummy`.")
+            await message.channel.send("Bonk! You are not allowed to say `dummy`.")
     
     # Handle commands
     else:
