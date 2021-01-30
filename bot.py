@@ -35,7 +35,7 @@ async def log(s):
 @bot.event
 async def on_ready():
     global log_channel, start_time, guild, connection, cursor
-    guild = discord.utils.get(bot.guilds, name=GUILD)
+    guild = discord.utils.get(bot.guilds, id=747524804109664326)
     log_channel = discord.utils.get(guild.channels, name=LOG_CHANNEL_NAME)
     print(f'{bot.user.name} connected to {guild.name}')
     # Conntect to Postgres
