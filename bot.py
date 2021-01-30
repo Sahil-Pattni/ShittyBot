@@ -59,7 +59,7 @@ def meme_reply(s):
 
     params = {
         'template_id': spongebob_id,
-        'text1': WoW,
+        'text1': reply,
         'username': env.get('IMGFLIP_USERNAME'),
         'password': env.get('IMGFLIP_PASSWORD')
     }
