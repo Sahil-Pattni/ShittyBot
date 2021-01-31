@@ -121,7 +121,7 @@ async def price(ctx, *args):
         await ctx.send(response['msg'])
     # Return Price
     else:
-        await ctx.send(f"1 {args[0]} = {response['price']:.4f} {args[1]}")
+        await ctx.send(f"1 {args[0]} = {float(response['price']):.4f} {args[1]}")
         
     
 
