@@ -175,7 +175,7 @@ async def stonks(ctx, *args):
         
         # Return balances
         for crypto in response['balances']:
-            free, locked = float(crypto['free']), (crypto['locked'])
+            free, locked = float(crypto['free']), float(crypto['locked'])
             reply += f"{crypto['asset']}:\n------\n"
             reply += f"Free: {free:,.3f}\n"
             reply += f"Locked: {locked:,.3f}\n\n"
