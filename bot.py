@@ -179,7 +179,7 @@ async def stonks(ctx, *args):
                 continue
 
 
-            reply += f"{symbol}: {free:,.2f}"
+            reply += f"{symbol}: {free:,.5f}"
 
             # Skip conversion if USDT
             if symbol != 'USDT':
