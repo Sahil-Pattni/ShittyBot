@@ -208,7 +208,7 @@ async def stonks(ctx, *args):
 
         # Prepare string reply for message
         for asst in assets:
-            reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]} USDT)\n"
+            reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
         reply += f'\nTotal Asset Worth (USDT): ${total_usdt:,.2f}'
 
         await ctx.send(reply) # send
