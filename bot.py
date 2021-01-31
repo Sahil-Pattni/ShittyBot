@@ -205,11 +205,11 @@ async def stonks(ctx, *args):
                 converted = rate*free
                 reply += f" ({converted:,.2f} USDT)"
                 # Add to total USDT
-                total += converted
+                total_usdt += converted
             
             else:
                 # if ticker is USDT, just add it to total
-                total += free
+                total_usdt += free
             
             reply += '\n'
 
