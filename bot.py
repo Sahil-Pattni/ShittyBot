@@ -9,6 +9,9 @@ import datetime
 from datetime import timedelta
 import numpy as np
 import os
+import hashlib
+import hmac
+from urllib.parse import urlencode
 
 # Environment with access tokens
 env = os.environ
@@ -17,6 +20,7 @@ env = os.environ
 LOG_CHANNEL_NAME = 'bot_logs' # Channel for bot log output
 WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
 VINAYAK = 713761220154621992 # Vinayak's ID
+SAHIL = 346393129915777034 # My ID
 BANNED_CHANNELS = ['trivia', 'chess', 'nsfw'] # Channels to ignore
 
 # Modules
@@ -97,7 +101,7 @@ async def insult(ctx):
 
 
 # Get cryptocurrency pair price via Binance
-@bot.command(name='price', help='binance api')
+@bot.command(name='price', help='crypto pair prices')
 async def price(ctx, *args):
     if len(args) == 0:
         await ctx.send("Please provide a ticker symbol (e.g. BTC USTD for BTC/USDT)")
@@ -122,8 +126,64 @@ async def price(ctx, *args):
     # Return Price
     else:
         await ctx.send(f"1 {args[0]} = {float(response['price']):.4f} {args[1]}")
-        
     
+@bot.command(name='stonks', help='stonks')
+async def stonks(ctx, **args):
+    if len(args == 0):
+        await ctx.send('No arguments provided. Bonk.')
+
+    base = 'https://api.binance.com/api'
+    timestamp = int(requests.get(f'{base}/v1/time').json()['serverTime'])
+    params = {
+        'timestamp': timestamp
+    }
+
+    # Partial endpoint
+    url = f'{base}/v3/' # no endpoint for now
+    arg = args[0].lower().strip() # clean up
+    
+    # Get signed payload
+    hashsign = hmac.new(
+        env.get('BINANCE_SECRET').encode('utf-8'),
+        urlencode(params).encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+    # Add signature to request parameters
+    params['signature'] = hashsign
+    # Add API key to headers
+    headers = {'X-MBX-APIKEY': env.get('BINANCE_KEY')}
+
+    # Get open orders
+    if arg == 'open':
+        url += 'openOrders'
+        # TODO: Implement
+        await ctx.send('To be implemented')
+        return
+    # Account balances
+    elif arg == 'balances':
+        reply = ''
+        response = requests.get(f"{base}/v3/account", params=params, headers=headers).json()
+        
+        # Handle errors
+        if 'code' in response:
+            await ctx.send(f"Error encountered. See #{LOG_CHANNEL_NAME} for details.")
+            await log(f"Error on command: `{ctx.message.content}`. Error: {response['msg']}")
+        
+        # Return balances
+        for crypto in response['balances']:
+            reply += f"{crypto['asset']}:\n------\n"
+            reply += f"Free: {crypto['free']:,.3f}\n"
+            reply += f"Locked: {crypto['locked']:,.3f}\n\n"
+        await ctx.send(reply) # send
+        return
+        
+        
+
+
+
+
+    
+
 
 # Wallpaper Generator
 # Optional arguments: width, height
