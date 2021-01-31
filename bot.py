@@ -172,6 +172,10 @@ async def stonks(ctx, *args):
             await log(f"Error on command: `{ctx.message.content}`. Error: {response['msg']}")
         
         # Return balances
+
+        # total USDT counter
+        total_usdt = 0
+
         for crypto in response['balances']:
             symbol, free, locked = crypto['asset'], float(crypto['free']), float(crypto['locked'])
             # Skip empty wallets
@@ -198,10 +202,18 @@ async def stonks(ctx, *args):
 
                 # Convert to float
                 rate = float(rate['price'])
-                reply += f" ({rate*free:,.2f} USDT)"
+                converted = rate*free
+                reply += f" ({converted:,.2f} USDT)"
+                # Add to total USDT
+                total += converted
+            
+            else:
+                # if ticker is USDT, just add it to total
+                total += free
             
             reply += '\n'
 
+        reply += f'TOTAL: {total_usdt:,.3f} USDT'
         await ctx.send(reply) # send
         return
 
