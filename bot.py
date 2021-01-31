@@ -103,12 +103,17 @@ async def price(ctx, *args):
         await ctx.send("Please provide a ticker symbol (e.g. BTC USTD for BTC/USDT)")
         return
     
+    elif len(args) < 2:
+        await ctx.send("Please provide a currency pair.")
+        return
+    
     # Inform user if they provide more than two args
     elif len(args) > 2:
         await ctx.send(f'Assuming {args[0]}/{args[1]} as ticker pair...')
 
     url = 'https://api.binance.com/api/v3/ticker/price'
     params = {'symbol': f'{args[0]}{args[1]}'}
+    print(params)
     response = requests.get(url, params=params).json()
 
     # Check for error
