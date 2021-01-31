@@ -128,7 +128,7 @@ async def price(ctx, *args):
         await ctx.send(f"1 {args[0]} = {float(response['price']):.4f} {args[1]}")
     
 @bot.command(name='stonks', help='stonks')
-async def stonks(ctx, **args):
+async def stonks(ctx, *args):
     if len(args == 0):
         await ctx.send('No arguments provided. Bonk.')
 
