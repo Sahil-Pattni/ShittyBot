@@ -98,7 +98,7 @@ async def insult(ctx):
 
 # Get cryptocurrency pair price via Binance
 @bot.command(name='price', help='binance api')
-async def price(ctx, **args):
+async def price(ctx, *args):
     if len(args) == 0:
         await ctx.send("Please provide a ticker symbol (e.g. BTC USTD for BTC/USDT)")
         return
