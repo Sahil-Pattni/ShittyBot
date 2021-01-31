@@ -176,18 +176,13 @@ async def stonks(ctx, *args):
         # Return balances
         for crypto in response['balances']:
             free, locked = float(crypto['free']), float(crypto['locked'])
+            if free == 0 and locked == 0:
+                continue
             reply += f"{crypto['asset']}:\n------\n"
             reply += f"Free: {free:,.3f}\n"
             reply += f"Locked: {locked:,.3f}\n\n"
         await ctx.send(reply) # send
         return
-        
-        
-
-
-
-
-    
 
 
 # Wallpaper Generator
