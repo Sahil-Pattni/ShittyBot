@@ -130,8 +130,6 @@ async def stonks(ctx, *args):
     # Only allow me to use it for now
     if ctx.author.id != SAHIL:
         await ctx.send(f'{ctx.author.name}, you are not authorized to use stonks!')
-    if len(args) == 0:
-        await ctx.send('No arguments provided. Bonk.')
 
     base = 'https://api.binance.com/api'
     timestamp = int(requests.get(f'{base}/v1/time').json()['serverTime'])
@@ -139,7 +137,6 @@ async def stonks(ctx, *args):
         'timestamp': timestamp
     }
 
-    arg = args[0].lower().strip() # clean up
     
     # Get signed payload
     hashsign = hmac.new(
@@ -152,15 +149,17 @@ async def stonks(ctx, *args):
     # Add API key to headers
     headers = {'X-MBX-APIKEY': env.get('BINANCE_KEY')}
 
+    # ------ ARGUMENTS TAKEN OUT FOR NOW ----------
+
     # --------- OPEN ORDERS -------------
-    if arg == 'open':
+    if False:
         # TODO: Implement
         await ctx.send('To be implemented')
         return
 
 
     # -------- ACCOUNT BALANCES ----------
-    elif arg == 'balances':
+    elif True:
         reply = ''
         response = requests.get(f"{base}/v3/account", params=params, headers=headers).json()
         
