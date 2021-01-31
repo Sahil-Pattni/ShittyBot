@@ -18,6 +18,7 @@ LOG_CHANNEL_NAME = 'bot_logs' # Channel for bot log output
 WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
 VINAYAK = 713761220154621992 # Vinayak's ID
 BANNED_CHANNELS = ['trivia', 'chess', 'nsfw'] # Channels to ignore
+
 # Modules
 guild = None # Discord Group
 log_channel = None
@@ -95,20 +96,29 @@ async def insult(ctx):
     await ctx.send(response.json()['insult'])
 
 
-# Bitcoin price
-@bot.command(name='btc', help='btc_price')
-async def btc(ctx):
-    url = 'https://api.coindesk.com/v1/bpi/currentprice.json'
-    response = requests.get(url).json()['bpi']['USD']['rate']
-    await ctx.send(f'Current Price: ${response}')
+# Get cryptocurrency pair price via Binance
+@bot.command(name='price', help='binance api')
+async def price(ctx, **args):
+    if len(args) == 0:
+        await ctx.send("Please provide a ticker symbol (e.g. BTC USTD for BTC/USDT)")
+        return
+    
+    # Inform user if they provide more than two args
+    elif len(args) > 2:
+        await ctx.send(f'Assuming {args[0]}/{args[1]} as ticker pair...')
 
+    url = 'https://api.binance.com/api/v3/ticker/price'
+    params = {'symbol': f'{args[0]}{args[1]}'}
+    response = requests.get(url, params=params).json()
 
-# Dogecoin price
-@bot.command(name='doge', help='dogecoin price')
-async def btc(ctx):
-    url = f'https://api.nomics.com/v1/currencies/ticker?key={env.get("NOMICS_KEY")}&ids=DOGE&attributes=price'
-    response = requests.get(url).json()[0]['price']
-    await ctx.send(f'Current Price: ${response}')
+    # Check for error
+    if 'code' in response:
+        await ctx.send(response['msg'])
+    # Return Price
+    else:
+        await ctx.send(f"1 {args[0]} = {response['price']:.4f} {args[1]}")
+        
+    
 
 # Wallpaper Generator
 # Optional arguments: width, height
