@@ -182,10 +182,17 @@ async def stonks(ctx, *args):
             rate = requests.get(
                 f'{base}/v3/ticker/price',
                 params={'symbol': f'{symbol}USDT'}
-            ).json()['price']
+            ).json()
+
+            # Handle error
+            if 'code' in rate:
+                await ctx.send(f"Error encountered. See #{LOG_CHANNEL_NAME} for details.")
+                await log(f"Error on command: `{ctx.message.content}`. Error: {rate['msg']}")
+                return
+            
 
             # Convert to float
-            rate = float(rate)
+            rate = float(rate['price'])
 
             reply += f"{free:,.2f} ({rate:,.3f} USDT)\n"
 
