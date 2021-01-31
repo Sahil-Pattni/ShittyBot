@@ -127,6 +127,7 @@ async def price(ctx, *args):
     else:
         await ctx.send(f"1 {args[0]} = {float(response['price']):.4f} {args[1]}")
     
+
 @bot.command(name='stonks', help='stonks')
 async def stonks(ctx, *args):
     
@@ -142,8 +143,6 @@ async def stonks(ctx, *args):
         'timestamp': timestamp
     }
 
-    # Partial endpoint
-    url = f'{base}/v3/' # no endpoint for now
     arg = args[0].lower().strip() # clean up
     
     # Get signed payload
@@ -159,7 +158,6 @@ async def stonks(ctx, *args):
 
     # Get open orders
     if arg == 'open':
-        url += 'openOrders'
         # TODO: Implement
         await ctx.send('To be implemented')
         return
@@ -175,12 +173,22 @@ async def stonks(ctx, *args):
         
         # Return balances
         for crypto in response['balances']:
-            free, locked = float(crypto['free']), float(crypto['locked'])
-            if free == 0 and locked == 0:
+            symbol, free, locked = crypto['asset'], float(crypto['free']), float(crypto['locked'])
+            # Skip empty wallets
+            if free == 0:
                 continue
-            reply += f"{crypto['asset']}:\n------\n"
-            reply += f"Free: {free:,.3f}\n"
-            reply += f"Locked: {locked:,.3f}\n\n"
+
+            # Conversion rate to USDT
+            rate = response.get(
+                f'{base}/v3/ticker/price',
+                params={'symbol': f'{symbol}USDT'}
+            ).json()['price']
+
+            # Convert to float
+            rate = float(rate)
+
+            reply += f"{free:,.2f} ({rate:,.3f} USDT)\n"
+            
         await ctx.send(reply) # send
         return
 
