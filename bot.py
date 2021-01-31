@@ -1,17 +1,14 @@
+from urllib.parse import urlencode # Used for authenticated requests (see: Binance module)
+from discord.ext import commands
+import numpy as np
 import requests
 import discord
-from discord.ext import commands
+import hashlib # Used for signed requests
 import random
-import re
-import time
-import psycopg2
-import datetime
-from datetime import timedelta
-import numpy as np
-import os
-import hashlib
-import hmac
-from urllib.parse import urlencode
+import hmac # Used for signed requests
+import os # Environment variables
+import re # Regex
+
 
 # Environment with access tokens
 env = os.environ
@@ -29,7 +26,7 @@ log_channel = None
 bot = commands.Bot(command_prefix='$')
 
 
-# Log bot output
+# Output to bot_log channel
 async def log(s):
     await log_channel.send(s)
 
@@ -156,12 +153,14 @@ async def stonks(ctx, *args):
     # Add API key to headers
     headers = {'X-MBX-APIKEY': env.get('BINANCE_KEY')}
 
-    # Get open orders
+    # --------- OPEN ORDERS -------------
     if arg == 'open':
         # TODO: Implement
         await ctx.send('To be implemented')
         return
-    # Account balances
+
+
+    # -------- ACCOUNT BALANCES ----------
     elif arg == 'balances':
         reply = ''
         response = requests.get(f"{base}/v3/account", params=params, headers=headers).json()
@@ -176,46 +175,46 @@ async def stonks(ctx, *args):
         # total USDT counter
         total_usdt = 0
 
+        assets = [] # Store crypto values here
+
         for crypto in response['balances']:
             symbol, free, locked = crypto['asset'], float(crypto['free']), float(crypto['locked'])
             # Skip empty wallets
             if free == 0:
                 continue
 
+            conversion_rate = 1 # Default if currency is USDT
 
-            reply += f"{symbol}: {free:,.5f}"
-
-            # Skip conversion if USDT
+            # Calculate conversion rate if not USDT
             if symbol != 'USDT':
-                # Conversion rate to USDT
+                # Get ticker pair price
                 rate = requests.get(
                     f'{base}/v3/ticker/price',
                     params={'symbol': f'{symbol}USDT'}
                 ).json()
 
-                # Handle error
+                # Handle server-side error and exit
                 if 'code' in rate:
                     await ctx.send(f"Error encountered. See #{LOG_CHANNEL_NAME} for details.")
                     await log(f"Error on command: `{ctx.message.content}`. Error: {rate['msg']}")
                     return
-                
+                # Set conversion rate
+                conversion_rate = float(rate['price'])
 
-                # Convert to float
-                rate = float(rate['price'])
-                converted = rate*free
-                reply += f" ({converted:,.2f} USDT)"
-                # Add to total USDT
-                total_usdt += converted
-            
-            else:
-                # if ticker is USDT, just add it to total
-                total_usdt += free
-            
-            reply += '\n'
+            # Add to assets list [SYMBOL, QTY, USDT_EQUIVALENT]
+            assets.append([symbol, free, free * conversion_rate])
+        
+        total_usdt = sum([x[2] for x in assets]) # Total worth in USDT (real-time)
+        assets.sort(key=lambda x: x[2]) # Sort by total USDT value
 
-        reply += f'TOTAL: {total_usdt:,.3f} USDT'
+        # Prepare string reply for message
+        for asst in assets:
+            reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]} USDT)\n"
+        reply += f'\nTotal Asset Worth (USDT): ${total_usdt:,.2f}'
+
         await ctx.send(reply) # send
         return
+
 
 
 # Wallpaper Generator
@@ -240,6 +239,9 @@ async def wallpaper(ctx, *args):
     seed = random.randint(10,999999)
     url = f'https://picsum.photos/seed/{seed}/{w}/{h}'
     await ctx.send(url)
+
+
+
 
 # ------------------------------------ #
 if __name__ == '__main__':

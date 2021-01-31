@@ -1,5 +1,2 @@
-numpy
 requests
-datetime
 discord
-psycopg2
