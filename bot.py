@@ -129,7 +129,11 @@ async def price(ctx, *args):
     
 @bot.command(name='stonks', help='stonks')
 async def stonks(ctx, *args):
-    if len(args == 0):
+    
+    # Only allow me to use it for now
+    if ctx.author.id != SAHIL:
+        await ctx.send(f'{ctx.author.name}, you are not authorized to use stonks!')
+    if len(args) == 0:
         await ctx.send('No arguments provided. Bonk.')
 
     base = 'https://api.binance.com/api'
