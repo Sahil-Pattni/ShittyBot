@@ -179,7 +179,7 @@ async def stonks(ctx, *args):
                 continue
 
 
-            reply += f"{free:,.2f}"
+            reply += f"{symbol}: {free:,.2f}"
 
             # Skip conversion if USDT
             if symbol != 'USDT':
@@ -198,7 +198,9 @@ async def stonks(ctx, *args):
 
                 # Convert to float
                 rate = float(rate['price'])
-                reply += f" ({rate:,.2f} USDT)"
+                reply += f" ({rate*free:,.2f} USDT)"
+            
+            reply += '\n'
 
         await ctx.send(reply) # send
         return
