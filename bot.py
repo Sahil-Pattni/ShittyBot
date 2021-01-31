@@ -179,7 +179,7 @@ async def stonks(ctx, *args):
                 continue
 
             # Conversion rate to USDT
-            rate = response.get(
+            rate = requests.get(
                 f'{base}/v3/ticker/price',
                 params={'symbol': f'{symbol}USDT'}
             ).json()['price']
@@ -188,7 +188,7 @@ async def stonks(ctx, *args):
             rate = float(rate)
 
             reply += f"{free:,.2f} ({rate:,.3f} USDT)\n"
-            
+
         await ctx.send(reply) # send
         return
 
