@@ -1,6 +1,5 @@
 from urllib.parse import urlencode # Used for authenticated requests (see: Binance module)
 from discord.ext import commands
-import numpy as np
 import requests
 import discord
 import hashlib # Used for signed requests
