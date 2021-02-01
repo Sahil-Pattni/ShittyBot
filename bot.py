@@ -94,11 +94,11 @@ async def stonks(ctx):
     free, locked = binance.get_balances()
     
     # Prepare string reply for message
-    reply = 'FREE BALANCES:'
+    reply = 'AVAILABLE FUNDS:\n'
     for asst in free:
         reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
-    reply += '\nOPEN ORDERS:'
+    reply += '\nFUNDS LOCKED IN UNFULFILLED ORDERS:\n'
     for asst in locked:
         reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
