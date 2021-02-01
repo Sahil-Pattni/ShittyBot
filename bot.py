@@ -73,14 +73,6 @@ def is_channel(channel_id):
     return commands.check(predicate)
 
 
-# Checks if a user is allowed to say dummy
-@bot.command(name='dummycheck', help='Can u use the word dummy?')
-async def dummy_check(ctx):
-    flag = ''
-    if ctx.author.id == VINAYAK:
-        flag = 'NOT'
-    await ctx.send(f'{ctx.author.name}, you are {flag} allowed to say the word dummy.')
-
 
 # Random picker
 @bot.command(name='random', help='Chooses a random element from provided arguments')
@@ -96,34 +88,6 @@ async def rand_choose(ctx, *args):
 async def insult(ctx):
     response = requests.get('https://evilinsult.com/generate_insult.php?lang=en&type=json')
     await ctx.send(response.json()['insult'])
-
-
-# Get cryptocurrency pair price via Binance
-@bot.command(name='price', help='crypto pair prices')
-async def price(ctx, *args):
-    if len(args) == 0:
-        await ctx.send("Please provide a ticker symbol (e.g. BTC USTD for BTC/USDT)")
-        return
-    
-    elif len(args) < 2:
-        await ctx.send("Please provide a currency pair.")
-        return
-    
-    # Inform user if they provide more than two args
-    elif len(args) > 2:
-        await ctx.send(f'Assuming {args[0]}/{args[1]} as ticker pair...')
-
-    url = 'https://api.binance.com/api/v3/ticker/price'
-    params = {'symbol': f'{args[0]}{args[1]}'}
-    print(params)
-    response = requests.get(url, params=params).json()
-
-    # Check for error
-    if 'code' in response:
-        await ctx.send(response['msg'])
-    # Return Price
-    else:
-        await ctx.send(f"1 {args[0]} = {float(response['price']):.4f} {args[1]}")
     
 # Retrieve Binance portfolio
 @bot.command(name='stonks', help='stonks')
@@ -149,33 +113,6 @@ async def stonks(ctx):
 
     await ctx.send(reply) # send
     return
-
-
-
-# Wallpaper Generator
-# Optional arguments: width, height
-@bot.command(name='wallpaper', help='Wallpaper')
-async def wallpaper(ctx, *args):
-    w = 1920
-    h = 1080
-    try:
-        if len(args) == 1:
-            x = int(args[0])
-            w = x
-            h = x
-        elif len(args) == 2:
-            w = int(args[0])
-            h = int(args[1])
-    except Exception as e:
-        await ctx.send(f'Your arguments are invalid. Please try 0-2 integer arguments.\nSee #{LOG_CHANNEL_NAME} for more details.')
-        await log(e)
-        return
-
-    seed = random.randint(10,999999)
-    url = f'https://picsum.photos/seed/{seed}/{w}/{h}'
-    await ctx.send(url)
-
-
 
 
 # ------------------------------------ #
