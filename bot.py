@@ -1,4 +1,5 @@
 from urllib.parse import urlencode # Used for authenticated requests (see: Binance module)
+from ApiError import ApiError # Custom Binance API Exception
 from discord.ext import commands
 import requests
 import discord
@@ -7,6 +8,7 @@ import random
 import hmac # Used for signed requests
 import os # Environment variables
 import re # Regex
+import binance
 
 
 # Environment with access tokens
@@ -125,93 +127,28 @@ async def price(ctx, *args):
     
 # Retrieve Binance portfolio
 @bot.command(name='stonks', help='stonks')
-async def stonks(ctx, *args):
+async def stonks(ctx):
     
     # Only allow me to use it for now
     if ctx.author.id != SAHIL:
         await ctx.send(f'{ctx.author.name}, you are not authorized to use stonks!')
 
-    base = 'https://api.binance.com/api'
-    timestamp = int(requests.get(f'{base}/v1/time').json()['serverTime'])
-    params = {
-        'timestamp': timestamp
-    }
+    free, locked = binance.get_balances()
 
+
+
+    # Prepare string reply for message
+    print('FREE BALANCES:')
+    for asst in free:
+        reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
-    # Get signed payload
-    hashsign = hmac.new(
-        env.get('BINANCE_SECRET').encode('utf-8'),
-        urlencode(params).encode('utf-8'),
-        hashlib.sha256
-    ).hexdigest()
-    # Add signature to request parameters
-    params['signature'] = hashsign
-    # Add API key to headers
-    headers = {'X-MBX-APIKEY': env.get('BINANCE_KEY')}
+    print('OPEN ORDERS:')
+    for asst in free:
+        reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
+    reply += f'\nTotal Asset Worth (USDT): ${total_usdt:,.2f}'
 
-    # ------ ARGUMENTS TAKEN OUT FOR NOW ---------- #
-
-    # --------- OPEN ORDERS ------------- #
-    if False:
-        # TODO: Implement
-        await ctx.send('To be implemented')
-        return
-
-
-    # -------- ACCOUNT BALANCES ---------- #
-    elif True:
-        reply = ''
-        response = requests.get(f"{base}/v3/account", params=params, headers=headers).json()
-        
-        # Handle errors
-        if 'code' in response:
-            await ctx.send(f"Error encountered. See #{LOG_CHANNEL_NAME} for details.")
-            await log(f"Error on command: `{ctx.message.content}`. Error: {response['msg']}")
-        
-        # Return balances
-
-        # total USDT counter
-        total_usdt = 0
-
-        assets = [] # Store crypto values here
-
-        for crypto in response['balances']:
-            symbol, free, locked = crypto['asset'], float(crypto['free']), float(crypto['locked'])
-            # Skip empty wallets
-            if free == 0:
-                continue
-
-            conversion_rate = 1 # Default if currency is USDT
-
-            # Calculate conversion rate if not USDT
-            if symbol != 'USDT':
-                # Get ticker pair price
-                rate = requests.get(
-                    f'{base}/v3/ticker/price',
-                    params={'symbol': f'{symbol}USDT'}
-                ).json()
-
-                # Handle server-side error and exit
-                if 'code' in rate:
-                    await ctx.send(f"Error encountered. See #{LOG_CHANNEL_NAME} for details.")
-                    await log(f"Error on command: `{ctx.message.content}`. Error: {rate['msg']}")
-                    return
-                # Set conversion rate
-                conversion_rate = float(rate['price'])
-
-            # Add to assets list [SYMBOL, QTY, USDT_EQUIVALENT]
-            assets.append([symbol, free, free * conversion_rate])
-        
-        total_usdt = sum([x[2] for x in assets]) # Total worth in USDT (real-time)
-        assets.sort(key=lambda x: x[2]) # Sort by total USDT value
-
-        # Prepare string reply for message
-        for asst in assets:
-            reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
-        reply += f'\nTotal Asset Worth (USDT): ${total_usdt:,.2f}'
-
-        await ctx.send(reply) # send
-        return
+    await ctx.send(reply) # send
+    return
 
 
 
