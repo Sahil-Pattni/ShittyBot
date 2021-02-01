@@ -66,13 +66,6 @@ async def on_message(message):
         await bot.process_commands(message)
 
 
-# Restriction channel check
-def is_channel(channel_id):
-    def predicate(ctx):
-        return ctx.message.channel.id == channel_id
-    return commands.check(predicate)
-
-
 
 # Random picker
 @bot.command(name='random', help='Chooses a random element from provided arguments')
@@ -89,6 +82,7 @@ async def insult(ctx):
     response = requests.get('https://evilinsult.com/generate_insult.php?lang=en&type=json')
     await ctx.send(response.json()['insult'])
     
+
 # Retrieve Binance portfolio
 @bot.command(name='stonks', help='stonks')
 async def stonks(ctx):
