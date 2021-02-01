@@ -96,11 +96,14 @@ async def stonks(ctx):
     # Prepare string reply for message
     reply = 'AVAILABLE FUNDS:\n'
     for asst in free:
-        reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
+        # Don't print any assets with < 1 USDT balance
+        if asst[2] > 1:
+            reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
     reply += '\nFUNDS LOCKED IN UNFULFILLED ORDERS:\n'
     for asst in locked:
-        reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
+        if asst[2] > 1:
+            reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
     total_usdt = sum([x[2] for x in free]) + sum(x[2] for x in locked)
 
