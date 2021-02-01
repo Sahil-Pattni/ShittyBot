@@ -3,3 +3,4 @@
 .bot.py.swp
 .DS_Store
 .vscode/
+__pycache__/
