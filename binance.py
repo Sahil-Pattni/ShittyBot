@@ -108,7 +108,3 @@ def get_balances():
 
     # Return both lists, sorted
     return free_assets, locked_assets
-
-    
-
-
