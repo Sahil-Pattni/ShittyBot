@@ -99,7 +99,7 @@ async def stonks(ctx):
         reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
     print('OPEN ORDERS:')
-    for asst in free:
+    for asst in locked:
         reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
     total_usdt = sum([x[2] for x in free]) + sum(x[2] for x in locked)
