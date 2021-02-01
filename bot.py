@@ -99,8 +99,6 @@ async def stonks(ctx):
 
     free, locked = binance.get_balances()
 
-
-
     # Prepare string reply for message
     print('FREE BALANCES:')
     for asst in free:
@@ -109,6 +107,9 @@ async def stonks(ctx):
     print('OPEN ORDERS:')
     for asst in free:
         reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
+    
+    total_usdt = sum([x[2] for x in free]) + sum(x[2] for x in locked)
+
     reply += f'\nTotal Asset Worth (USDT): ${total_usdt:,.2f}'
 
     await ctx.send(reply) # send
