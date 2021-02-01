@@ -91,7 +91,12 @@ async def stonks(ctx):
     if ctx.author.id != SAHIL:
         await ctx.send(f'{ctx.author.name}, you are not authorized to use stonks!')
 
-    free, locked = binance.get_balances()
+    try:
+        free, locked = binance.get_balances()
+    except ApiError as e:
+        await ctx.send("Error encountered. Please see #bot_logs for further details.")
+        await log(f'Error on {ctx.message.content}:\n{e}')
+        return
     
     # Prepare string reply for message
     reply = 'AVAILABLE FUNDS:\n'
