@@ -92,13 +92,15 @@ async def stonks(ctx):
         await ctx.send(f'{ctx.author.name}, you are not authorized to use stonks!')
 
     free, locked = binance.get_balances()
-    reply = ''
+    
     # Prepare string reply for message
-    print('FREE BALANCES:')
+    reply = ''
+    
+    reply += 'FREE BALANCES:'
     for asst in free:
         reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
-    print('OPEN ORDERS:')
+    reply += '\nOPEN ORDERS:'
     for asst in locked:
         reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
     
