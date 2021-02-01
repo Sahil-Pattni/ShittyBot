@@ -55,8 +55,8 @@ async def on_message(message):
         return
 
     # Stop Vinayak from saying dummy
-    if message.author.id == VINAYAK:
-        if 'dummy' in message.content.lower().split(' '):
+    if 'dummy' in message.content.lower().split(' '):
+        if message.author.id == VINAYAK:
             await message.channel.send("Bonk! You are not allowed to say `dummy`.")
     
     # Handle commands
@@ -123,7 +123,7 @@ async def price(ctx, *args):
     else:
         await ctx.send(f"1 {args[0]} = {float(response['price']):.4f} {args[1]}")
     
-
+# Retrieve Binance portfolio
 @bot.command(name='stonks', help='stonks')
 async def stonks(ctx, *args):
     
@@ -149,16 +149,16 @@ async def stonks(ctx, *args):
     # Add API key to headers
     headers = {'X-MBX-APIKEY': env.get('BINANCE_KEY')}
 
-    # ------ ARGUMENTS TAKEN OUT FOR NOW ----------
+    # ------ ARGUMENTS TAKEN OUT FOR NOW ---------- #
 
-    # --------- OPEN ORDERS -------------
+    # --------- OPEN ORDERS ------------- #
     if False:
         # TODO: Implement
         await ctx.send('To be implemented')
         return
 
 
-    # -------- ACCOUNT BALANCES ----------
+    # -------- ACCOUNT BALANCES ---------- #
     elif True:
         reply = ''
         response = requests.get(f"{base}/v3/account", params=params, headers=headers).json()
