@@ -55,9 +55,33 @@ def __convert_to_USDT(ticker, amount):
         params={'symbol': f'{ticker}USDT'}
     ).json()
 
-    # Raise Exception if API side error
+    # If USDT not available, convert to BNB first
     if 'code' in conv_rate:
-        raise ApiError(f"{ticker}: {conv_rate['msg']}")
+        bnb_rate = requests.get(
+            f'{BASE}/v3/ticker/price',
+            params={'symbol': f'{ticker}BNB'}
+        ).json()
+
+        # ERROR
+        if 'code' in bnb_rate:
+            raise ApiError(f"{ticker}: {bnb_rate['msg']}")
+
+        # Get BNB USDT conversion rate
+        usdt_bnb = requests.get(
+            f'{BASE}/v3/ticker/price',
+            params={'symbol': f'BNBUSDT'}
+        ).json()
+
+        # Handle error
+        if 'code' in usdt_bnb:
+            raise ApiError(f"{ticker}: {usdt_bnb['msg']}")
+
+        # Convert from TICKER to BNB to USDT, adjust for amount
+        return amount * float(bnb_rate['price']) * float(usdt_bnb['price'])
+
+
+
+        
 
     # Get converted rate if no error. Float wrapped just in case
     return float(conv_rate['price']) * amount
