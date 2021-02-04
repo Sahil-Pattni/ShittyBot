@@ -87,6 +87,19 @@ def __convert_to_USDT(ticker, amount) -> float:
     return float(conv_rate['price']) * amount
         
 
+# Get the 24 hour percent change for ticker
+def __get_change_pct(ticker):
+    url = f'{BASE}/api/v3/ticker/24hr'
+    params = {'symbol': ticker}
+    
+    response = requests.get(url, params=params).json()
+
+    # Handle errors
+    if 'code' in response:
+        raise ApiError(f"{ticker}: {response['msg']}")
+
+    return response['priceChangePercent']
+
 
 
 # Get account balances
@@ -105,7 +118,7 @@ def get_balances():
     result = result['balances']
 
     # ---- All coin balances stored here  ---- #
-    # Format: [TICKER, AMOUNT, USDT EQUIV.] #
+    # Format: [TICKER, AMOUNT, USDT EQUIV., 24HR_CHANGE] #
     # Locked assets are those that are locked in unfulfilled, open orders.
     free_assets = []
     locked_assets = []
@@ -118,11 +131,11 @@ def get_balances():
 
         # Add to lists if non-empty
         if free != 0:
-            free_assets.append([symbol, free, __convert_to_USDT(symbol, free)])
+            free_assets.append([symbol, free, __convert_to_USDT(symbol, free), __get_change_pct(symbol)])
         if locked != 0:
-            locked_assets.append([symbol, locked, __convert_to_USDT(symbol, locked)])
+            locked_assets.append([symbol, locked, __convert_to_USDT(symbol, locked), __get_change_pct(symbol)])
     
-    # Key to sort by third element (i.e.)
+    # Key to sort by third element (i.e. USDT value)
     sort_key = lambda x: x[2]
     
     # Sort coins by highest USDT value

@@ -20,30 +20,22 @@ WELCOME_CHANNEL_NAME = 'general' # Where the bot will welcome people
 VINAYAK = 713761220154621992 # Vinayak's ID
 SAHIL = 346393129915777034 # My ID
 BANNED_CHANNELS = ['trivia', 'chess', 'nsfw'] # Channels to ignore
+DEBUG_GUILD = 806913959260323848 
 
 # Modules
-guild = None # Discord Group
-log_channel = None
 bot = commands.Bot(command_prefix='$')
 
 
-# Output to bot_log channel
-async def log(s):
-    await log_channel.send(s)
+# Log messages to guild's log channel
+async def log(message, guild):
+    log_channel = discord.utils.get(guild.channels, name=LOG_CHANNEL_NAME)
+    await log_channel.send(message)
 
-# Init
+
+# On initialization
 @bot.event
 async def on_ready():
-    global log_channel, start_time, guild, connection, cursor
-    guild = discord.utils.get(bot.guilds, id=747524804109664326)
-    log_channel = discord.utils.get(guild.channels, name=LOG_CHANNEL_NAME)
-    print(f'{bot.user.name} connected to {guild.name}')
-
-# Upon a member joining
-@bot.event
-async def on_member_join(self, member):
-    welcome_channel = discord.utils.get(guild.channels, name=WELCOME_CHANNEL_NAME)
-    await welcome_channel.send(f'Hello there, {member.name}. Welcome to the {guild.name} discord!.')
+    print('Connected and running...')
 
 # Handle messages
 @bot.event
@@ -57,13 +49,28 @@ async def on_message(message):
         return
 
     # Stop Vinayak from saying dummy
-    if 'dummy' in message.content.lower().split(' '):
+    if 'dummy' in message.content.lower():
         if message.author.id == VINAYAK:
             await message.channel.send("Bonk! You are not allowed to say `dummy`.")
     
+    # Add jesus emoji if our Lord and Saviour is mentioned
+    if 'jesus' in message.content.lower():
+        await message.add_reaction(discord.utils.get(bot.emojis, name='jesus'))
+    
+    if 'bro' in message.content.lower():
+        await message.add_reaction(discord.utils.get(bot.emojis, name='sike'))
     # Handle commands
     else:
         await bot.process_commands(message)
+
+
+# Report deleted messages 
+@bot.event
+async def on_message_delete(message):
+    # avoid recursive deletion messages
+    if message.author == bot.user:
+        return
+    await message.channel.send(f'{message.author} deleted the following message:\n"{message.content}"')
 
 
 
@@ -95,7 +102,7 @@ async def stonks(ctx):
         free, locked = binance.get_balances()
     except ApiError as e:
         await ctx.send("Error encountered. Please see #bot_logs for further details.")
-        await log(f'Error on {ctx.message.content}:\n{e}')
+        await log(f'Error on {ctx.message.content}:\n{e}', ctx.guild)
         return
     
     # Prepare string reply for message
@@ -103,12 +110,18 @@ async def stonks(ctx):
     for asst in free:
         # Don't print any assets with < 1 USDT balance
         if asst[2] > 1:
-            reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
+            change = asst[3]
+            sign = '+' if change > 0 else '' # add + if positive change
+            change = f'{sign}{change:.2f}%' # String format
+            reply += f"{asst[1]:,.3f} {asst[0]} [{change}] ({asst[2]:,.3f} USDT)\n"
     
     reply += '\nFunds locked in unfulfilled orders:\n'
     for asst in locked:
         if asst[2] > 1:
-            reply += f"{asst[1]:,.3f} {asst[0]} ({asst[2]:,.3f} USDT)\n"
+            change = asst[3]
+            sign = '+' if change > 0 else '' # add + if positive change
+            change = f'{sign}{change:.2f}%' # String format
+            reply += f"{asst[1]:,.3f} {asst[0]} [{change}] ({asst[2]:,.3f} USDT)\n"
     
     total_usdt = sum([x[2] for x in free]) + sum(x[2] for x in locked)
 
