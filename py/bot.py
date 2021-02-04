@@ -83,25 +83,6 @@ async def insult(ctx):
     await ctx.send(response.json()['insult'])
     
 
-@bot.command(name='trades')
-async def trades(ctx):
-    # Only allow me to use it for now
-    if ctx.author.id != SAHIL:
-        await ctx.send(f'{ctx.author.name}, you are not authorized to use stonks!')
-    
-    try:
-        result = binance.profit()
-    except ApiError as e:
-        await ctx.send("Error encountered. Please see #bot_logs for further details.")
-        await log(f'Error on {ctx.message.content}:\n{e}')
-        return
-    
-    for res in result:
-        await ctx.send(res)
-        
-
-
-
 # Retrieve Binance portfolio
 @bot.command(name='stonks', help='stonks')
 async def stonks(ctx):

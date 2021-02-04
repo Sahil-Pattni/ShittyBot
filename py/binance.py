@@ -5,6 +5,7 @@ from ApiError import ApiError # Custom Binance API Exception
 import requests
 import hashlib # SHA-256 Encryption for HMAC
 import hmac # HMAC Encryption
+from tqdm import tqdm
 import os
 
 
@@ -137,33 +138,12 @@ def get_trades(ticker) -> dict:
     url = f'{BASE}/api/v3/allOrders'
     params = {'symbol': ticker}
     result = __signed_request(url, additional_params=params)
-
     # Handle error
-    if ['code'] in result:
-        raise ApiError(result['code'])
+    if 'code' in result:
+        raise ApiError(result['msg'])
+
+    # No trades available
+    if result == []:
+        return None 
 
     return result
-    
-
-def profit():
-    # Get tradable symbols
-    symbols = requests.get(f'{BASE}/api/v3/exchangeInfo').json()['symbols']
-
-    # Format: [FROM_TICKER, TO_TICKER, QTY, PRICE, TIMESTAMP]
-    all_trades = []
-
-    # Iterate through all pairs and add to trades if available
-    for symb in symbols:
-        from_ticker, to_ticker = symb['baseAsset'], symb['quoteAsset']
-        trades = get_trades(symb)
-
-        for trade in trades:
-            all_trades.append([
-                from_ticker,
-                to_ticker,
-                trade['executedQty'],
-                trade['price'],
-                trade['time']
-            ])
-    
-    return all_trades
