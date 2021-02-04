@@ -5,7 +5,6 @@ from ApiError import ApiError # Custom Binance API Exception
 import requests
 import hashlib # SHA-256 Encryption for HMAC
 import hmac # HMAC Encryption
-from tqdm import tqdm
 import os
 
 
