@@ -11,16 +11,19 @@ import os
 # Environment to access OS level variables
 env = os.environ
 # Base API endpoint
-BASE = 'https://api.binance.com/api'
+BASE = 'https://api.binance.com'
 
 
 # Generate hash-signed request
-def __signed_request(endpoint):
+def __signed_request(endpoint, additional_params=None):
     # Timestamp preliminary for request params
-    timestamp = int(requests.get(f'{BASE}/v1/time').json()['serverTime'])
+    timestamp = int(requests.get(f'{BASE}/api/v1/time').json()['serverTime'])
 
     # Request parameters
     params = {'timestamp': timestamp}
+
+    if additional_params is not None:
+        params.update(additional_params)
 
     # HMAC SHA-256 encryption using secret key for payload
     hashsign = hmac.new(
@@ -51,14 +54,14 @@ def __convert_to_USDT(ticker, amount):
     
     # Get conversion rate for ticker
     conv_rate = requests.get(
-        f'{BASE}/v3/ticker/price',
+        f'{BASE}/api/v3/ticker/price',
         params={'symbol': f'{ticker}USDT'}
     ).json()
 
     # If USDT not available, convert to BNB first
     if 'code' in conv_rate:
         bnb_rate = requests.get(
-            f'{BASE}/v3/ticker/price',
+            f'{BASE}/api/v3/ticker/price',
             params={'symbol': f'{ticker}BNB'}
         ).json()
 
@@ -68,7 +71,7 @@ def __convert_to_USDT(ticker, amount):
 
         # Get BNB USDT conversion rate
         usdt_bnb = requests.get(
-            f'{BASE}/v3/ticker/price',
+            f'{BASE}/api/v3/ticker/price',
             params={'symbol': f'BNBUSDT'}
         ).json()
 
@@ -92,8 +95,7 @@ def __convert_to_USDT(ticker, amount):
 # Get account balances
 def get_balances():
     # Endpoint for account info
-    url = f'{BASE}/v3/account'
-
+    url = f'{BASE}/api/v3/account'
     # Request resulting json
     result = __signed_request(url)
 
@@ -132,3 +134,4 @@ def get_balances():
 
     # Return both lists, sorted
     return free_assets, locked_assets
+
