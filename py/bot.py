@@ -3,15 +3,10 @@ from ApiError import ApiError # Custom Binance API Exception
 from discord.ext import commands
 import requests
 import discord
-import hashlib # Used for signed requests
 import random
-import hmac # Used for signed requests
 import os # Environment variables
-import re # Regex
 import binance
 from reactions import custom_emoji_map, default_emoji_map, phrase_map
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
 # Environment with access tokens
@@ -26,14 +21,10 @@ VINAYAK = 713761220154621992 # Vinayak's ID
 SAHIL = 346393129915777034 # My ID
 BANNED_CHANNELS = ['trivia', 'chess', 'nsfw'] # Channels to ignore
 DEBUG_GUILD = 806913959260323848 
-CONVO_CHANNEL = 806977707555946527
-DEBUG_CONVO = 806985216714997770
 
 
 # Counting convo steps
 steps = 0
-chat_history = None
-tokenizer, model = None, None
 
 # Modules
 bot = commands.Bot(command_prefix='$')
@@ -53,9 +44,10 @@ async def on_ready():
     # Load up language model
     model_size = 'medium'
     print('Importing model....')
+    start = time.time() # Time load 
     tokenizer = AutoTokenizer.from_pretrained(f"microsoft/DialoGPT-{model_size}")
     model = AutoModelForCausalLM.from_pretrained(f"microsoft/DialoGPT-{model_size}")
-    print('Model ready!')
+    print(f'Model ready! Load time: {time.time()-start:.2f} seconds.')
 
 # Handle messages
 @bot.event
@@ -68,29 +60,6 @@ async def on_message(message):
     # Avoid bot responding to itself
     if message.author == bot.user:
         return
-    
-    if message.channel.id == CONVO_CHANNEL or message.channel.id == DEBUG_CONVO:
-        # Chat with Microsoft DialogGPT
-        new_ids = tokenizer.encode(message.content + tokenizer.eos_token, return_tensors='pt')
-        
-        # Reset context every 5 steps
-        if steps == 0 or steps % 3 == 0:
-            chat_history = None
-        
-        
-        # Generate bot tokens 
-        bot_ids = new_ids if chat_history is None else torch.cat([chat_history, new_ids], dim=-1)
-        # Update chat history and increment steps
-        chat_history = model.generate(bot_ids, max_length=2000, pad_token_id=tokenizer.eos_token_id)
-        steps += 1
-
-        # Prepare reply
-        response = tokenizer.decode(chat_history[:, bot_ids.shape[1]:][0], skip_special_tokens=True)
-
-        await message.channel.send(response)
-        return
-
-
 
     message_words = message.content.lower().split(' ')
     # Iterate through words and check for matches
