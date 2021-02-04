@@ -89,7 +89,7 @@ def __convert_to_USDT(ticker, amount) -> float:
 
 
 # Get account balances
-def get_balances() -> tuple[list, list]:
+def get_balances() -> Tuple[list, list]:
     # Endpoint for account info
     url = f'{BASE}/api/v3/account'
     # Request resulting json
