@@ -9,7 +9,7 @@ import hmac # Used for signed requests
 import os # Environment variables
 import re # Regex
 import binance
-
+from reactions import emoji_map
 
 # Environment with access tokens
 env = os.environ
@@ -48,17 +48,11 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # Stop Vinayak from saying dummy
-    if 'dummy' in message.content.lower():
-        if message.author.id == VINAYAK:
-            await message.channel.send("Bonk! You are not allowed to say `dummy`.")
-    
-    # Add jesus emoji if our Lord and Saviour is mentioned
-    if 'jesus' in message.content.lower():
-        await message.add_reaction(discord.utils.get(bot.emojis, name='jesus'))
-    
-    if 'bro' in message.content.lower():
-        await message.add_reaction(discord.utils.get(bot.emojis, name='sike'))
+    # Iterate through words and check for matches
+    for word in emoji_map:
+        if word in message.content.lower():
+            reaction = emoji_map[word]
+            await message.add_reaction(discord.utils.get(bot.emojis, name=reaction))
     # Handle commands
     else:
         await bot.process_commands(message)
