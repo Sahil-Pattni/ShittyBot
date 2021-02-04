@@ -85,10 +85,16 @@ async def rand_choose(ctx, *args):
 
 # Insult
 @bot.command(name='insult', help='insults you')
-async def insult(ctx):
-    response = requests.get('https://evilinsult.com/generate_insult.php?lang=en&type=json')
-    await ctx.send(response.json()['insult'])
-    
+async def insult(ctx, *args):
+    BASE = 'https://insult.mattbas.org/api/'
+    params = {}
+    # If arguments exist, use them
+    params['who'] = ctx.message.content.replace('$insult ', '')
+    # Get custom insult
+    insult = requests.get(f'{BASE}/insult', params=params).text
+
+    await ctx.send(insult)
+        
 
 # Retrieve Binance portfolio
 @bot.command(name='stonks', help='stonks')
