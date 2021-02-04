@@ -51,9 +51,10 @@ async def on_ready():
     global tokenizer, model
     print('Connected and running...')
     # Load up language model
+    model_size = 'medium'
     print('Importing model....')
-    tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large")
-    model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large")
+    tokenizer = AutoTokenizer.from_pretrained(f"microsoft/DialoGPT-{model_size}")
+    model = AutoModelForCausalLM.from_pretrained(f"microsoft/DialoGPT-{model_size}")
     print('Model ready!')
 
 # Handle messages
@@ -71,15 +72,16 @@ async def on_message(message):
     if message.channel.id == CONVO_CHANNEL or message.channel.id == DEBUG_CONVO:
         # Chat with Microsoft DialogGPT
         new_ids = tokenizer.encode(message.content + tokenizer.eos_token, return_tensors='pt')
-
+        
         # Reset context every 5 steps
-        if steps == 0 or steps % 5 == 0:
+        if steps == 0 or steps % 3 == 0:
             chat_history = None
+        
         
         # Generate bot tokens 
         bot_ids = new_ids if chat_history is None else torch.cat([chat_history, new_ids], dim=-1)
         # Update chat history and increment steps
-        chat_history = model.generate(bot_ids, max_length=1000, pad_token_id=tokenizer.eos_token_id)
+        chat_history = model.generate(bot_ids, max_length=2000, pad_token_id=tokenizer.eos_token_id)
         steps += 1
 
         # Prepare reply
