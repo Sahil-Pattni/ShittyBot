@@ -57,11 +57,14 @@ async def news(ctx):
 
 @bot.command(name='joke')
 async def joke(ctx):
-    with open('jokes.txt', 'r') as jokes:
-        jokes = jokes.read()
-        jokes = jokes.split('<<>>')
-        
-        await ctx.send('\n'.join(jokes[randint(0, len(jokes)-1)].strip().split('<>')))
+    try:
+        with open('jokes.txt', 'r') as jokes:
+            jokes = jokes.read()
+            jokes = jokes.split('<<>>')
+            
+            await ctx.send('\n'.join(jokes[randint(0, len(jokes)-1)].strip().split('<>')))
+    except Exception as e:
+        await ctx.send(f'Error: {e}')
 
 @bot.event
 async def on_message(message):
