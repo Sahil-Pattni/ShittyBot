@@ -6,7 +6,7 @@ from random import randint
 import os
 from urllib.parse import urlparse
 import numpy as np
-
+from random import randint
 
 # Setup
 env = os.environ
@@ -54,6 +54,15 @@ async def news(ctx):
     news = news[randint(0, len(news)-1)]
     embed = discord.Embed(title=f'BREAKING NEWS!\n\n{news.title}', url=news.link)
     await ctx.send(embed=embed)
+
+
+@bot.command(name='joke')
+async def joke(ctx):
+    with open('jokes.txt', 'r') as jokes:
+        jokes = jokes.read()
+        jokes = jokes.split('<<>>')
+        
+        await ctx.send('\n'.join(jokes[randint(0, len(jokes)-1)].strip().split('<>')))
 
 @bot.event
 async def on_message(message):
