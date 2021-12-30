@@ -6,6 +6,7 @@ from random import randint
 import os
 from urllib.parse import urlparse
 from random import randint
+from reddit_joke import get_joke
 
 # Setup
 env = os.environ
@@ -65,6 +66,11 @@ async def joke(ctx):
             await ctx.send('\n'.join(jokes[randint(0, len(jokes)-1)].strip().split('<>')))
     except Exception as e:
         await ctx.send(f'Error: {e}')
+
+@bot.command(name='jokes')
+async def jokes(ctx):
+    title, desc = get_joke()
+    await ctx.send(f'{title}\n{desc}')
 
 @bot.event
 async def on_message(message):
