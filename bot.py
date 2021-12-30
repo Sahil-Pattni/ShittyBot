@@ -5,7 +5,6 @@ import pickle
 from random import randint
 import os
 from urllib.parse import urlparse
-import numpy as np
 from random import randint
 
 # Setup
